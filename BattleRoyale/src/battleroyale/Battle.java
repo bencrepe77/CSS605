@@ -5,6 +5,7 @@
 package battleroyale;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -17,113 +18,84 @@ public class Battle{
     
         //TRIBE 1
         
+        java.util.ArrayList<Player> allPlayers = new ArrayList();
         java.util.ArrayList<Player> tribe1 = new ArrayList();
+        java.util.ArrayList<Player> tribe2 = new ArrayList();
+
+        //Create defectors   
         
         for (int i=0;i<tribe1start;i++){
-        tribe1.add(new AllDefect0());
-        tribe1.get(i).setTribeIndexNum(i);
-        tribe1.get(i).setTribe(tribe1);
-//            System.out.println(tribe1.get(i).getTribeIndexNum());
-//            System.out.println(tribe1.get(i).getTribe().hashCode());
-
+        AllDefect0 a = new AllDefect0();
+        allPlayers.add(a);
+        tribe1.add(a);
         }
-        
-        //TRIBE 2
-        
-        java.util.ArrayList<Player> tribe2 = new ArrayList();
         
         for (int i=0;i<tribe2start;i++){
-        tribe2.add(new OptimisticPlayer());
-        tribe2.get(i).setTribeIndexNum(i);
-        tribe2.get(i).setTribe(tribe2);
-        }   
-        
-        //ALL PLAYERS 
-        
-        java.util.ArrayList<Player> allPlayers = new ArrayList();
-        
-        for (int i=0;i<tribe1.size();i++){
-        allPlayers.add(tribe1.get(i));
-        tribe1.get(i).setAllPlayersIndexNum(allPlayers.size());
-        tribe1.get(i).setAllPlayers(allPlayers);
-//            System.out.println(tribe1.get(i).getAllPlayersIndexNum());
-//            System.out.println("allPlayers size: "+allPlayers.get(i).getAllPlayers().size());
- 
+        OptimisticPlayer a = new OptimisticPlayer();
+        allPlayers.add(a);
+        tribe2.add(a);
         }
+        System.out.println("Players created. Tribe 1 Size: "+tribe1.size()+" Tribe 2 Size: "+tribe2.size()+" All Players Size: "+allPlayers.size());
+
         
-        for (int i=0;i<tribe2.size();i++){
-        allPlayers.add(tribe2.get(i));
-        tribe2.get(i).setAllPlayersIndexNum(allPlayers.size());
-        tribe2.get(i).setAllPlayers(allPlayers);
-//            System.out.println(tribe2.get(i).getAllPlayersIndexNum());
-//            System.out.println("allPlayers size: "+tribe2.get(i).getAllPlayers().size());
-        }
-//        for (int i=0; i<allPlayers.size();i++){
-//            System.out.println("Rollcall: "+allPlayers.get(i).getAllPlayersIndexNum()+" "+allPlayers.get(i).getAllPlayers().size());
-//        } 
         
-        System.out.println(tribe1.size()+" "+tribe2.size()+" "+allPlayers.size());
-            
-                
-               
-for (int a=0; a<allPlayers.size();a++){ 
-    for (int b=0; b<allPlayers.size();b++){ 
-        if (a > b && allPlayers.get(a).getAlive()==true && allPlayers.get(b).getAlive()==true){
-            int [] faceOffScores = faceOff(allPlayers.get(a),allPlayers.get(b));
-            
-            if (faceOffScores[4] == 2){
-                
-            
-            
-            allPlayers.get(a).setScore(faceOffScores[0]);
-            allPlayers.get(b).setScore(faceOffScores[1]);
-            
-            int[] playerAmoves = {faceOffScores[2], faceOffScores[3]};
-            allPlayers.get(a).setLastMoves(playerAmoves);
-            
-            int[] playerBmoves = {faceOffScores[3], faceOffScores[2]};
-            allPlayers.get(b).setLastMoves(playerBmoves);
+        boolean continuemore = evaluate(tribe1, tribe2);
+//        System.out.println("Passed first evaluate.");
+        int rounds = 0;
+        while (continuemore == true){
+            rounds = rounds+1;
+            int [] faceOffScores = faceOff(allPlayers.get(new Random().nextInt(allPlayers.size())), allPlayers.get(new Random().nextInt(allPlayers.size())));
+            continuemore = evaluate(tribe1, tribe2);
+            if (rounds>1000000){
+                break;
             }
-//        System.out.println("P1: "+a+", "+allPlayers.get(a).getTribeIndexNum()+", "+allPlayers.get(a).getAllPlayersIndexNum()+", "+allPlayers.get(a).getScore()+", P2: "+b+", "+allPlayers.get(b).getTribeIndexNum()+", "+allPlayers.get(b).getAllPlayersIndexNum()+", "+allPlayers.get(b).getScore());
+                }
+//        ending sCore
         
-        } 
+        System.out.println("End");
+        
+                int x = 0;
+        int y = 0;
+        for (int i=0;i<tribe1.size();i++){
+            x = x + tribe1.get(i).alive;
         }
-   
-}
-System.out.println("Tribe 1 Survivors: "+tribe1.size()+" Tribe 2 Survivors: "+tribe2.size());
+        for (int i=0;i<tribe2.size();i++){
+            y = y + tribe2.get(i).alive;
+
+        }
+        
+        System.out.println("Evaluate: Tribe 1 "+x+"/"+tribe1.size()+" and Tribe 2 "+y+"/"+tribe2.size());
+
+        
     }
 
+//public  boolean evaluate(ArrayList<Player> tribe1, ArrayList<Player> tribe2){     
+//return continuemore;
+//}    
+        
     
     public int[] faceOff(Player p1, Player p2){
-        
+
         int[] Scores = new int[5];
-        System.out.println("P1 Score "+p1.getScore()+" P2 Score "+p2.getScore());
+                
+        if(p1.equals(p2) == false && p1.alive == 1 && p2.alive ==1){
+
+//X        System.out.println("P1 Pre-Play Score "+p1.getScore()+" P2 Pre-Play Score "+p2.getScore());
         
-        if (p1.getScore() - p2.getScore() > 2){
+        if (p1.getScore() - p2.getScore() > 20){
             
-//            p2.getTribe().remove(p2.getTribeIndexNum());
-//            p2.getAllPlayers().remove(p2.getAllPlayersIndexNum());
             p2.makeDead();
-            System.out.println("Player 2 Removed");
+//X            System.out.println("Player 2 Removed");
             Scores[0]=0;
             Scores[1]=0;
             Scores[2]=p1.getLastMoves()[0];
             Scores[3]=p2.getLastMoves()[0];   
             Scores[4]=0;
             
-        } else if (p1.getScore() - p2.getScore() < -2){
+        } else if (p1.getScore() - p2.getScore() < -20){
             
-//            System.out.println(p1.getTribeIndexNum());
-//            System.out.println(p1.getTribe().size());
-//            System.out.println(p2.getAllPlayersIndexNum());
-//            System.out.println(p2.getAllPlayers().size());
-//            p1.getTribe().remove(p1.getTribeIndexNum());
-//            System.out.println("Got through tribe "+p1.getTribe().size());
             p1.makeDead();
-//            p2.getAllPlayers().remove(p2.getAllPlayersIndexNum());
-//            System.out.println("Got through allPlayers "+p2.getAllPlayers().size());
-
-            System.out.println("Player 1 Removed");
+//X            System.out.println("Player 1 Removed");
             Scores[0]=0;
             Scores[1]=0;
             Scores[2]=p1.getLastMoves()[0];
@@ -166,11 +138,48 @@ System.out.println("Tribe 1 Survivors: "+tribe1.size()+" Tribe 2 Survivors: "+tr
             Scores[4]=2;
         }
         }
+            p1.setScore(Scores[0]);
+            p2.setScore(Scores[1]);
+            
+            int[] playerAmoves = {Scores[2], Scores[3]};
+            p1.setLastMoves(playerAmoves);
+            
+            int[] playerBmoves = {Scores[3], Scores[2]};
+            p2.setLastMoves(playerBmoves);
 
+        } else {
+//X            System.out.println("Game canceled.");
+            Scores[0]=0;
+            Scores[1]=0;
+            Scores[2]=p1.getLastMoves()[0];
+            Scores[3]=p2.getLastMoves()[0];   
+            Scores[4]=0;
+            
+        }
         return Scores;
+
+        }
+
+    private boolean evaluate(ArrayList<Player> tribe1, ArrayList<Player> tribe2) {
+                
+        boolean continuemore = true; 
+        int x = 0;
+        int y = 0;
+        for (int i=0;i<tribe1.size();i++){
+            x = x + tribe1.get(i).alive;
+//             System.out.println("time around="+i+x);
+        }
+        for (int i=0;i<tribe2.size();i++){
+            y = y + tribe2.get(i).alive;
+//            System.out.println("time around="+i+y);
+        }
         
-
-
-        }    
+        if (x ==0 || y==0){
+            continuemore = false;
+        }
+//X        System.out.println("Evaluate: Tribe 1 "+x+"/"+tribe1.size()+" and Tribe 2 "+y+"/"+tribe2.size());
+       
+        return continuemore;
+    }
     
 }

@@ -21,17 +21,18 @@ public class Player {
     int allPlayersIndexNum = -1;
     ArrayList tribea;
     ArrayList allPlayersa;
-    boolean alive = true;
+    int alive = 1;
         
     public int makeMove(){
         return 2;
     }
 
 public void makeDead(){
-        alive = false;
+        alive = 0;
+//        System.out.println("Killed.");
 }
 
-public boolean getAlive(){
+public int getAlive(){
     return alive;
 }
         

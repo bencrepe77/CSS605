@@ -24,7 +24,8 @@ public class AllDefect0 extends Player{
     public int makeMove() {
     return 0;
     }
-//
+    
+  //
 //public void setAllPlayersIndexNum (int index){
 //allPlayersIndexNum = index -1;
 //}
